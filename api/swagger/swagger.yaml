@@ -4,9 +4,9 @@ info:
   title: Hello World App
 # during dev, should point to your local machine
 host: localhost:10010
-# basePath prefixes all resource paths 
+# basePath prefixes all resource paths
 basePath: /
-# 
+#
 schemes:
   # tip: remove http to make production-grade
   - http
@@ -18,12 +18,35 @@ consumes:
 produces:
   - application/json
 paths:
+  /increment:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: adder
+    get:
+      description: Returns Increment the value
+      # used as the method name of the controller
+      operationId: increment
+      parameters:
+        - name: value
+          in: query
+          description: The value to increment.
+          required: false
+          type: number
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/IncrementRespones"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /hello:
     # binds a127 app logic to a route
     x-swagger-router-controller: hello_world
     get:
       description: Returns 'Hello' to the caller
-      # used as the method name of the controller
       operationId: hello
       parameters:
         - name: name
@@ -46,6 +69,12 @@ paths:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
+  IncrementRespones:
+    required:
+      - message
+    properties:
+      message:
+        type: string
   HelloWorldResponse:
     required:
       - message
